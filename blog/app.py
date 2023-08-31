@@ -53,8 +53,9 @@ def homepage():
         homepage = True, \
         title = 'homepage.html')
 
-@app.route('/threadpage/', methods=['GET', 'POST'])
-def threadpage():
+@app.route('/threadpage/<id>/', methods=['GET', 'POST'])#0=id
+def threadpage(id):
+    comment_info_all = CommentInfo.query.filter(CommentInfo.ThreadID == id).all()
     if request.method == 'POST':
         comment_info = CommentInfo(
             Nickname = request.form['Nickname'],
@@ -65,11 +66,11 @@ def threadpage():
         )
         db.session.add(comment_info)
         db.session.commit()
-        return redirect('/')#redirect(url_for('user_detail', id=user_info.id))
+        return redirect(url_for('threadpage'))
     else:
-        return render_template('threadpage.html', \
+        return render_template('threadpage.html', comment_info_all = comment_info_all, \
             threadpage = True, \
-            title = 'threadpage.html')
+            title = 'スレッドページ（ID='+ id +')')
 
 @app.route('/threadcreate/', methods=['GET', 'POST'])
 def threadcreate():
