@@ -5,8 +5,14 @@
 
 			<div class="pt-3 pb-4">
 				<p>{{ title }}が読み込まれています。</p>				
-				<div class="alert alert-secondary" role="alert">
-					今日の天気は曇りです。光のコントラストが少なくポートレート撮影にはもってこいですね。
-				</div>
+				<form action="" method="POST">
+				  <label for="Thread_Name">スレ名</label>
+				  <input type="text" name="Thread_Name">
+				  <label for="Thread_Content">このスレについて</label>
+				  <input type="text" name="Thread_Content">
+				  <label for="UserID">UserID</label>
+				  <input type="text" name="UserID">
+				  <input type="submit" value="作成">
+				</form>
 			</div>
 {%- endblock %}

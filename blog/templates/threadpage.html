@@ -5,8 +5,16 @@
 				<!-- コメント内容のフォームと匿名希望かのチェックボックスを解説 -->
 
 				<p>{{ title }}が読み込まれています。</p>				
-				<div class="alert alert-secondary" role="alert">
-					今日の天気は曇りです。光のコントラストが少なくポートレート撮影にはもってこいですね。
-				</div>
+				<form action="" method="POST">
+					<label for="Nickname">名前</label>
+					<input type="text" name="Nickname">
+					<label for="Comment_Content">コメント</label>
+					<input type="text" name="Comment_Content">
+					<label for="UserID">UserID</label>
+					<input type="text" name="UserID">
+					<label for="ThreadID">ThreadID</label>
+					<input type="text" name="ThreadID">
+					<input type="submit" value="投稿">
+				  </form>
 			</div>
 {%- endblock %}
