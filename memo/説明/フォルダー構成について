@@ -1,31 +1,29 @@
-以下にそれぞれのフォルダーの位置と役割について記します（未完成）
-作業フォルダ/
- ├ blog/
- │  ├ templates/（HTMLファイルを格納しています）
- │  │  ├ base.html（継承元）
- │  │  ├ index.html
- │  │  └ 
- │  ├ models/
- │  │  ├ __init__.py
- │  │  ├ database.py
- │  │  ├ models.py
- │  │  └ wiki.db
- │  └ server.py
- ├ static/
- │  ├ images/
- │  │  └ sample.jpg
- │  ├ back_image.jpg
- │  ├ base.css
- │  ├ diary.css
- │  ├ diary.js
- │  ├ edit.css
- │  ├ edit.js
- │  ├ image.jpg
- │  ├ index.css
- │  ├ login.css
- │  ├ login.js
- │  ├ newcomer.css
- │  └ newcomer.js
- ├ templates/（HTMLファイルを格納しています）
- │  └ index.html
- └ main.py（ここを起動することでシステム全体を起動）
+sixchan4
+blog
+├── __pycache__
+│   └── app.cpython-311.pyc
+├── instance
+│   └── project.db
+├── models
+├── templates
+│   ├── base.html
+│   ├── footer.html
+│   ├── header.html
+│   ├── homepage.html
+│   ├── thread_create.html
+│   ├── threadpage.html
+│   ├── user_detail.html
+│   ├── user_login.html
+│   └── userpage.html
+├── tools
+│   └── delete_db.py
+├── app.py
+└── test.py
+static
+└── images
+templates
+└── index.html
+main.py
+LICENSE
+README.md
+requirements.txt
