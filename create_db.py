@@ -1,5 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+import os
+from flask_login import UserMixin, LoginManager
 
 # create the extension
 db = SQLAlchemy()
@@ -7,12 +9,18 @@ db = SQLAlchemy()
 app = Flask(__name__)
 # configure the SQLite database, relative to the app instance folder
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///project.db"
+
+app.config['SECRET_KEY'] = os.urandom(24)
 # initialize the app with the extension
 db.init_app(app)
 
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+
 # テーブルを定義####################################################
 
-class UserInfo(db.Model):
+class UserInfo(UserMixin, db.Model):
     __tablename__ = 'user_info'
     UserID = db.Column(db.Integer, primary_key=True)
     User_Name = db.Column(db.String, nullable=False)

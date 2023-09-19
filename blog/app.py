@@ -66,7 +66,7 @@ def threadpage(id):
         )
         db.session.add(comment_info)
         db.session.commit()
-        return redirect(url_for('threadpage'))
+        return redirect(url_for('threadpage',id=request.form['ThreadID']))
     else:
         return render_template('threadpage.html', comment_info_all = comment_info_all, \
             threadpage = True, \

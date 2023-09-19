@@ -1,4 +1,6 @@
 sixchan4
+__pycache__
+.venv
 blog
 ├── __pycache__
 │   └── app.cpython-311.pyc
