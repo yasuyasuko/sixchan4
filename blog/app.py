@@ -2,7 +2,13 @@
 from flask import Flask
 from flask import render_template
 from flask import request, redirect, url_for
+from flask_wtf import FlaskForm
+from wtforms import (StringField, PasswordField, BooleanField, RadioField, SelectField,SubmitField, ValidationError)
+from wtforms.validators import DataRequired,Email
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
+from werkzeug.security import check_password_hash, generate_password_hash
+import os
 import hashlib
 import datetime
 
@@ -14,13 +20,63 @@ app = Flask(__name__)
 db = SQLAlchemy()
 # configure the SQLite database, relative to the app instance folder
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///c:/Users/user/sixchan4/blog/instance/project.db"
+
+app.config['SECRET_KEY'] = os.urandom(24)
 # initialize the app with the extension
 db.init_app(app)
+
+#ユーザログイン機能関連###################
+
+#/loginで確認
+
+#インスタンス化
+login_manager = LoginManager()
+#アプリをログイン機能を紐付ける
+login_manager.init_app(app)
+#未ログインユーザーを転送する(ここでは'login'ビュー関数を指定)
+login_manager.login_view = 'login'
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(user_id)
+
+
+  #パスワードチェックする関数を追記
+def check_password(self, password):
+    return check_password_hash(self.password_hash, password)
+
+class LoginForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    submit = SubmitField('ログイン')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        #フォーム入力したアドレスがDB内にあるか検索
+        user = UserInfo.query.filter_by(Email=form.email.data).first()
+        if user is not None:
+            #check_passwordはUserモデル内の関数
+            if UserInfo.check_password(form.password.data):
+                #ログイン処理。ログイン状態として扱われる。
+                login_user(user)
+                next = request.args.get('next')
+                if next == None or not next[0] == '/':
+                    next = url_for('user_maintenance')
+                return redirect(next)
+                
+            else:
+                flash('パスワードが一致しません')
+        else:
+            flash('入力されたユーザーは存在しません')
+
+    return render_template('login.html', form=form)
 
 
 # テーブルを定義####################################################
 
-class UserInfo(db.Model):
+class UserInfo(UserMixin,db.Model):
     __tablename__ = 'user_info'
     UserID = db.Column(db.Integer, primary_key=True)
     User_Name = db.Column(db.String, nullable=False)
