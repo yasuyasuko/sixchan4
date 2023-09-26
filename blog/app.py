@@ -1,7 +1,7 @@
 #import
 from flask import Flask
 from flask import render_template
-from flask import request, redirect, url_for
+from flask import request, redirect, url_for, flash
 from flask_wtf import FlaskForm
 from wtforms import (StringField, PasswordField, BooleanField, RadioField, SelectField,SubmitField, ValidationError)
 from wtforms.validators import DataRequired,Email
@@ -56,23 +56,25 @@ def login():
     if form.validate_on_submit():
         #フォーム入力したアドレスがDB内にあるか検索
         user = UserInfo.query.filter_by(Email=form.email.data).first()
+        print(form.email.data)
+        print(user)
         if user is not None:
             #check_passwordはUserモデル内の関数
-            if UserInfo.check_password(form.password.data):
+            if user.check_password(form.password.data):
                 #ログイン処理。ログイン状態として扱われる。
                 login_user(user)
+                print("Success login")
                 next = request.args.get('next')
                 if next == None or not next[0] == '/':
                     next = url_for('user_maintenance')
                 return redirect(next)
                 
             else:
-                flash('パスワードが一致しません')
+                print('パスワードが一致しません')
         else:
-            flash('入力されたユーザーは存在しません')
+            print('入力されたユーザーは存在しません')
 
     return render_template('login.html', form=form)
-
 
 # テーブルを定義####################################################
 
