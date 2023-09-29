@@ -1,26 +1,32 @@
+#import
 from flask import Flask
+from flask import render_template
+from flask import request, redirect, url_for, flash
+from flask_wtf import FlaskForm
+from wtforms import (StringField, PasswordField, BooleanField, RadioField, SelectField,SubmitField, ValidationError)
+from wtforms.validators import DataRequired,Email
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
+from werkzeug.security import check_password_hash, generate_password_hash
 import os
-from flask_login import UserMixin, LoginManager
+import hashlib
+import datetime
+
+dt_now = datetime.datetime.now()
+# create the app
+app = Flask(__name__)
 
 # create the extension
 db = SQLAlchemy()
-# create the app
-app = Flask(__name__)
 # configure the SQLite database, relative to the app instance folder
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///project.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///c:/Users/user/sixchan4/blog/instance/SNS.db"
 
 app.config['SECRET_KEY'] = os.urandom(24)
 # initialize the app with the extension
 db.init_app(app)
 
 
-login_manager = LoginManager()
-login_manager.init_app(app)
-
-# テーブルを定義####################################################
-
-class UserInfo(UserMixin, db.Model):
+class UserInfo(UserMixin,db.Model):
     __tablename__ = 'user_info'
     UserID = db.Column(db.Integer, primary_key=True)
     User_Name = db.Column(db.String, nullable=False)
@@ -44,6 +50,4 @@ class ThreadInfo(db.Model):
     Thread_Create_Date = db.Column(db.String, nullable=False)
     UserID = db.Column(db.Integer, nullable=False)
 
-if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()
+print("success")

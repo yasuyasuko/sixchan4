@@ -19,7 +19,7 @@ app = Flask(__name__)
 # create the extension
 db = SQLAlchemy()
 # configure the SQLite database, relative to the app instance folder
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///c:/Users/user/sixchan4/blog/instance/project.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///c:/Users/user/sixchan4/blog/instance/SNS.db"
 
 app.config['SECRET_KEY'] = os.urandom(24)
 # initialize the app with the extension
@@ -41,9 +41,9 @@ def load_user(user_id):
     return User.query.get(user_id)
 
 
-  #パスワードチェックする関数を追記
-def check_password(self, password):
-    return check_password_hash(self.password_hash, password)
+#   #パスワードチェックする関数を追記
+# def check_password(self, password):
+#     return check_password_hash(self.password_hash, password)
 
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired()])
@@ -60,7 +60,9 @@ def login():
         print(user)
         if user is not None:
             #check_passwordはUserモデル内の関数
-            if user.check_password(form.password.data):
+            # if check_password_hash(user.Password, form.password.data):
+            hashpass=hashlib.sha256(form.password.data)
+            if hashpass == user.Password:#TypeError: Strings must be encoded before hashing
                 #ログイン処理。ログイン状態として扱われる。
                 login_user(user)
                 print("Success login")
@@ -70,6 +72,9 @@ def login():
                 return redirect(next)
                 
             else:
+                print(user.Password)
+                print(form.password.data)
+                print(check_password_hash(user.Password, form.password.data))
                 print('パスワードが一致しません')
         else:
             print('入力されたユーザーは存在しません')
