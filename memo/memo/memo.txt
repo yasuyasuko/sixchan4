@@ -17,3 +17,6 @@ with app.app_context():
 
 確認！！08/30に質問した！！！(済)
 https://ja.stackoverflow.com/questions/96078/flask%e3%81%a7no-such-table%e3%81%a8%e3%82%a8%e3%83%a9%e3%83%bc%e3%81%8c%e5%87%ba%e3%82%8b
+
+
+maezaki
