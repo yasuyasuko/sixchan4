@@ -61,7 +61,7 @@ def login():
         if user is not None:
             #check_passwordはUserモデル内の関数
             # if check_password_hash(user.Password, form.password.data):
-            hashpass=hashlib.sha256(form.password.data)
+            hashpass =hashlib.sha256(bytes(form.password.data, encoding = "utf-8")).hexdigest()
             if hashpass == user.Password:#TypeError: Strings must be encoded before hashing
                 #ログイン処理。ログイン状態として扱われる。
                 login_user(user)
