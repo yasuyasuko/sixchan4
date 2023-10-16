@@ -3,7 +3,7 @@ import sqlite3
 # データベースに接続する
 conn = sqlite3.connect('blog/instance/project.db')
 c = conn.cursor()
-c.execute('DELETE FROM user_info WHERE UserID=?', (4,))
+c.execute('DELETE FROM user_info WHERE id=?', (4,))
 
 #保存（コミット）する
 conn.commit()

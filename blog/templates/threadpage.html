@@ -6,7 +6,7 @@
 				{% set cnt = [1] %}
 				{% for comment_info in comment_info_all %}
 					<div>
-             			<p>No.{{ cnt[0] }} Name:{{comment_info.Nickname}} ID:{{comment_info.UserID}}</p>
+             			<p>No.{{ cnt[0] }} Name:{{comment_info.Nickname}} ID:{{comment_info.id}}</p>
 						<p>{{comment_info.Comment_Content}}</p>
 						<p>{{comment_info.Comment_Create_Date}}</p>
 						{% set _ = cnt.append(cnt[0] + 1) %}

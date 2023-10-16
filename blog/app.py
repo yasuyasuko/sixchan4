@@ -19,7 +19,7 @@ app = Flask(__name__)
 # create the extension
 db = SQLAlchemy()
 # configure the SQLite database, relative to the app instance folder
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///c:/Users/user/sixchan4/blog/instance/SNS.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///c:/Users/user/sixchan4/blog/instance/SNSdb.db"
 
 app.config['SECRET_KEY'] = os.urandom(24)
 # initialize the app with the extension
@@ -38,7 +38,7 @@ login_manager.login_view = 'login'
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(user_id)
+    return UserInfo.query.get(user_id)
 
 
 #   #パスワードチェックする関数を追記
@@ -68,7 +68,7 @@ def login():
                 print("Success login")
                 next = request.args.get('next')
                 if next == None or not next[0] == '/':
-                    next = url_for('user_maintenance')
+                    next = url_for('userpage')
                 return redirect(next)
                 
             else:
@@ -85,7 +85,7 @@ def login():
 
 class UserInfo(UserMixin,db.Model):
     __tablename__ = 'user_info'
-    UserID = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     User_Name = db.Column(db.String, nullable=False)
     Email = db.Column(db.String, nullable=False)
     Password = db.Column(db.String, nullable=False)
@@ -96,7 +96,7 @@ class CommentInfo(db.Model):
     Nickname = db.Column(db.String, nullable=True)
     Comment_Content = db.Column(db.String, nullable=False)
     Comment_Create_Date = db.Column(db.String, nullable=False)
-    UserID = db.Column(db.Integer, nullable=False)
+    id = db.Column(db.Integer, nullable=False)
     ThreadID = db.Column(db.Integer, nullable=False)
 
 class ThreadInfo(db.Model):
@@ -105,7 +105,7 @@ class ThreadInfo(db.Model):
     Thread_Name = db.Column(db.String, nullable=False)
     Thread_Content = db.Column(db.String, nullable=False)
     Thread_Create_Date = db.Column(db.String, nullable=False)
-    UserID = db.Column(db.Integer, nullable=False)
+    id = db.Column(db.Integer, nullable=False)
 
 
 #Routing##########################################################
@@ -124,7 +124,7 @@ def threadpage(id):
             Nickname = request.form['Nickname'],
             Comment_Content = request.form['Comment_Content'],
             Comment_Create_Date =dt_now,
-            UserID  = request.form['UserID'],
+            id  = request.form['UserID'],
             ThreadID = request.form['ThreadID'],
         )
         db.session.add(comment_info)
@@ -142,7 +142,7 @@ def threadcreate():
             Thread_Name = request.form['Thread_Name'],
             Thread_Content = request.form['Thread_Content'],
             Thread_Create_Date =dt_now,
-            UserID  = request.form['UserID']
+            id  = request.form['UserID']
         )
         db.session.add(thread_info)
         db.session.commit()
@@ -153,7 +153,7 @@ def threadcreate():
             title = 'thread_create.html')
 
 # ユーザー情報をDBに登録
-@app.route('/userlogin/', methods=['GET', 'POST'])
+@app.route('/register', methods=['GET', 'POST'])
 def userlogin():
     if request.method == 'POST':
         user_info = UserInfo(
@@ -163,7 +163,7 @@ def userlogin():
         )
         db.session.add(user_info)
         db.session.commit()
-        return redirect(url_for('user_detail', id=user_info.UserID))
+        return redirect(url_for('user_detail', id=user_info.id))
     else:
         return render_template('user_login.html', \
             user_login = True, \

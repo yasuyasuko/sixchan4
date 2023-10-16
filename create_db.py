@@ -19,7 +19,7 @@ app = Flask(__name__)
 # create the extension
 db = SQLAlchemy()
 # configure the SQLite database, relative to the app instance folder
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///c:/Users/user/sixchan4/blog/instance/SNS.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///c:/Users/user/sixchan4/blog/instance/SNSdb.db"
 
 app.config['SECRET_KEY'] = os.urandom(24)
 # initialize the app with the extension
@@ -28,7 +28,7 @@ db.init_app(app)
 
 class UserInfo(UserMixin,db.Model):
     __tablename__ = 'user_info'
-    UserID = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     User_Name = db.Column(db.String, nullable=False)
     Email = db.Column(db.String, nullable=False)
     Password = db.Column(db.String, nullable=False)
@@ -39,7 +39,7 @@ class CommentInfo(db.Model):
     Nickname = db.Column(db.String, nullable=True)
     Comment_Content = db.Column(db.String, nullable=False)
     Comment_Create_Date = db.Column(db.String, nullable=False)
-    UserID = db.Column(db.Integer, nullable=False)
+    id = db.Column(db.Integer, nullable=False)
     ThreadID = db.Column(db.Integer, nullable=False)
 
 class ThreadInfo(db.Model):
@@ -48,6 +48,6 @@ class ThreadInfo(db.Model):
     Thread_Name = db.Column(db.String, nullable=False)
     Thread_Content = db.Column(db.String, nullable=False)
     Thread_Create_Date = db.Column(db.String, nullable=False)
-    UserID = db.Column(db.Integer, nullable=False)
+    id = db.Column(db.Integer, nullable=False)
 
 print("success")
