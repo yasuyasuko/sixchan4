@@ -96,7 +96,7 @@ class CommentInfo(db.Model):
     Nickname = db.Column(db.String, nullable=True)
     Comment_Content = db.Column(db.String, nullable=False)
     Comment_Create_Date = db.Column(db.String, nullable=False)
-    id = db.Column(db.Integer, nullable=False)
+    UserID = db.Column(db.Integer, nullable=False)
     ThreadID = db.Column(db.Integer, nullable=False)
 
 class ThreadInfo(db.Model):
@@ -105,7 +105,7 @@ class ThreadInfo(db.Model):
     Thread_Name = db.Column(db.String, nullable=False)
     Thread_Content = db.Column(db.String, nullable=False)
     Thread_Create_Date = db.Column(db.String, nullable=False)
-    id = db.Column(db.Integer, nullable=False)
+    UserID = db.Column(db.Integer, nullable=False)
 
 
 #Routing##########################################################
@@ -124,7 +124,7 @@ def threadpage(id):
             Nickname = request.form['Nickname'],
             Comment_Content = request.form['Comment_Content'],
             Comment_Create_Date =dt_now,
-            id  = request.form['UserID'],
+            UserID  = request.form['UserID'],
             ThreadID = request.form['ThreadID'],
         )
         db.session.add(comment_info)
@@ -142,7 +142,7 @@ def threadcreate():
             Thread_Name = request.form['Thread_Name'],
             Thread_Content = request.form['Thread_Content'],
             Thread_Create_Date =dt_now,
-            id  = request.form['UserID']
+            UserID  = request.form['UserID']
         )
         db.session.add(thread_info)
         db.session.commit()
@@ -154,7 +154,7 @@ def threadcreate():
 
 # ユーザー情報をDBに登録
 @app.route('/register', methods=['GET', 'POST'])
-def userlogin():
+def register():
     if request.method == 'POST':
         user_info = UserInfo(
             User_Name = request.form['User_Name'],
@@ -176,11 +176,20 @@ def user_detail(id):
         return render_template("user_detail.html", user_info=user_info)
 
 @app.route('/userpage/')
+@login_required
 def userpage():
+    user_info_all = CommentInfo.query.filter(CommentInfo.ThreadID == id).all()
     return render_template('userpage.html', \
         userpage = True, \
         title = 'userpage.html')
 
+# logoutページのルーティング
+@app.route('/logout')
+def logout():
+  # logout_user関数を呼び出し
+  logout_user()
+  # トップページにリダイレクト
+  return redirect(url_for('homepage'))
 
 #おまじない###############################################################
 if __name__ == "__main__":

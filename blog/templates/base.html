@@ -13,6 +13,27 @@
 		<div class="container">
             <h1 class="mt-4">{{ title }}</h1>
                     
+<div>
+  <!-- 表題 -->
+  Microblog:
+  <!-- トップページへのリンク -->
+  <a href="{{ url_for('homepage') }}">Home</a>
+
+  <!-- 現在のユーザーが匿名ユーザーの場合 -->
+  {% if current_user.is_anonymous %}
+  <!-- loginページへのリンク -->
+  <a href="{{ url_for('login') }}">Login</a>
+
+  <!-- その他の(現在のユーザーが有効な権限を保持している)場合 -->
+  {% else %}
+  <!-- logoutページへのリンク -->
+  <a href="{{ url_for('logout') }}">Logout</a>
+
+  <!-- jinja2 templateではendが必要 -->
+  {% endif %}
+
+</div>
+
             <!-- ヘッダー -->
             {% include "header.html" %}
         

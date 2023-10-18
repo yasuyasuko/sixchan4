@@ -1,10 +1,9 @@
-<!-- ユーザデータ閲覧ページ -->
+<!-- スレッド閲覧ページ -->
 {%- extends "base.html" %}
 {%- block content %}
 			<div class="pt-3 pb-4">
-				<p>{{ title }}が読み込まれています。</p>				
-				<div class="alert alert-secondary" role="alert">
-					今日の天気は曇りです。光のコントラストが少なくポートレート撮影にはもってこいですね。
-				</div>
+             	<p>ID:{{user_info.id}}</p>
+				<p>NAME:{{user_info.User_Name}}</p>
+				<p>{{user_info.Email}}</p>
 			</div>
 {%- endblock %}
