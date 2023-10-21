@@ -178,8 +178,10 @@ def user_detail(id):
 @app.route('/userpage/')
 @login_required
 def userpage():
-    user_info_all = CommentInfo.query.filter(CommentInfo.ThreadID == id).all()
-    return render_template('userpage.html', \
+    id = UserInfo.get_id(current_user)
+    user_info = UserInfo.query.filter(UserInfo.id == id).all()
+    print("ID is "+id)
+    return render_template('userpage.html', user_info = user_info ,\
         userpage = True, \
         title = 'userpage.html')
 
