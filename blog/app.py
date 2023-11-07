@@ -1,21 +1,28 @@
 #import
-from flask import Flask
-from flask import render_template
-from flask import request, redirect, url_for, flash
-from flask_wtf import FlaskForm
-from wtforms import (StringField, PasswordField, BooleanField, RadioField, SelectField,SubmitField, ValidationError)
-from wtforms.validators import DataRequired,Email
+from flask import Flask ,render_template ,request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
-from werkzeug.security import check_password_hash, generate_password_hash
-import os
+from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required, current_user
+# from werkzeug.security import check_password_hash, generate_password_hash
 import hashlib
 import datetime
+from wtforms import (StringField, PasswordField, BooleanField, 
+                     RadioField, SelectField,SubmitField, ValidationError)
+from wtforms.validators import DataRequired,Email
+from flask_wtf import FlaskForm
+from flask_sqlalchemy import SQLAlchemy
+import os
 
 dt_now = datetime.datetime.now()
+
 # create the app
 app = Flask(__name__)
 
+#インスタンス化
+login_manager = LoginManager()
+#アプリをログイン機能を紐付ける
+login_manager.init_app(app)
+#未ログインユーザーを転送する(ここでは'login'ビュー関数を指定)
+login_manager.login_view = 'login'
 # create the extension
 db = SQLAlchemy()
 # configure the SQLite database, relative to the app instance folder
@@ -25,21 +32,9 @@ app.config['SECRET_KEY'] = os.urandom(24)
 # initialize the app with the extension
 db.init_app(app)
 
-#ユーザログイン機能関連###################
-
-#/loginで確認
-
-#インスタンス化
-login_manager = LoginManager()
-#アプリをログイン機能を紐付ける
-login_manager.init_app(app)
-#未ログインユーザーを転送する(ここでは'login'ビュー関数を指定)
-login_manager.login_view = 'login'
-
 @login_manager.user_loader
 def load_user(user_id):
     return UserInfo.query.get(user_id)
-
 
 #   #パスワードチェックする関数を追記
 # def check_password(self, password):
@@ -49,37 +44,6 @@ class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('ログイン')
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        #フォーム入力したアドレスがDB内にあるか検索
-        user = UserInfo.query.filter_by(Email=form.email.data).first()
-        print(form.email.data)
-        print(user)
-        if user is not None:
-            #check_passwordはUserモデル内の関数
-            # if check_password_hash(user.Password, form.password.data):
-            hashpass =hashlib.sha256(bytes(form.password.data, encoding = "utf-8")).hexdigest()
-            if hashpass == user.Password:
-                #ログイン処理。ログイン状態として扱われる。
-                login_user(user)#DB内のUserIDをidにしないといけない？
-                print("Success login")
-                next = request.args.get('next')
-                if next == None or not next[0] == '/':
-                    next = url_for('userpage')
-                return redirect(next)
-                
-            else:
-                print(user.Password)
-                print(form.password.data)
-                print(check_password_hash(user.Password, form.password.data))
-                print('パスワードが一致しません')
-        else:
-            print('入力されたユーザーは存在しません')
-
-    return render_template('login.html', form=form)
 
 # テーブルを定義####################################################
 
@@ -115,6 +79,38 @@ def homepage():
     return render_template('homepage.html', \
         homepage = True, \
         title = 'homepage.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        #フォーム入力したアドレスがDB内にあるか検索
+        user = UserInfo.query.filter_by(Email=form.email.data).first()
+        print(form.email.data)
+        print(user)
+        if user is not None:
+            #check_passwordはUserモデル内の関数
+            # if check_password_hash(user.Password, form.password.data):
+            hashpass =hashlib.sha256(bytes(form.password.data, encoding = "utf-8")).hexdigest()
+            if hashpass == user.Password:
+                #ログイン処理。ログイン状態として扱われる。
+                login_user(user)#DB内のUserIDをidにしないといけない？
+                # print("Success login")
+                next = request.args.get('next')
+                if next == None or not next[0] == '/':
+                    next = url_for('userpage')
+                return redirect(next)
+                
+            else:
+                # print(user.Password)
+                # print(form.password.data)
+                # print(check_password_hash(user.Password, form.password.data))
+                print('パスワードが一致しません')
+        else:
+            print('入力されたユーザーは存在しません')
+
+    return render_template('login.html', form=form)
+
 
 @app.route('/threadpage/<id>/', methods=['GET', 'POST'])#0=id
 def threadpage(id):
@@ -179,7 +175,7 @@ def user_detail(id):
 @login_required
 def userpage():
     id = UserInfo.get_id(current_user)
-    user_info = UserInfo.query.filter(UserInfo.id == id).all()
+    user_info = db.get_or_404(UserInfo, id)
     print("ID is "+id)
     return render_template('userpage.html', user_info = user_info ,\
         userpage = True, \
